@@ -29,7 +29,7 @@ jobs:
         cmd.exe /c "call `"C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat`" && set > %temp%\vcvars.txt"
         Get-Content "$env:temp\vcvars.txt" | Foreach-Object { if ($_ -match "^(.*?)=(.*)$") { Set-Content "env:\$($matches[1])" $matches[2] } }
         # Configure Qt5
-        ..\qt5\configure.bat -release -static -no-pch -optimize-size -platform win32-msvc -prefix "..\Qt6_binaries" -qt-sqlite -qt-pcre -qt-zlib -qt-libpng -qt-libjpeg -opengl desktop -qt-freetype -nomake tests -no-compile-examples -nomake examples -mp
+        ..\qt5\configure.bat -release -static -no-pch -optimize-size -platform win32-msvc -prefix "..\Qt6_binaries" -no-feature-accessibility -confirm-license
         cmake --build . --parallel 4
         cmake --install .
     - name: Package binaries
