@@ -28,15 +28,15 @@ jobs:
         # Setup the compiler
         cmd.exe /c "call `"C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars32.bat`" && set > %temp%\vcvars.txt"
         Get-Content "$env:temp\vcvars.txt" | Foreach-Object { if ($_ -match "^(.*?)=(.*)$") { Set-Content "env:\$($matches[1])" $matches[2] } }
-        # Configure Qt6
-        ..\qt5\configure.bat -release -static -no-pch -optimize-size -platform win32-msvc -prefix "..\Qt6_binaries" -skip qt5compat,qtactiveqt,qtcoap,qtconnectivity,qtdatavis3d,qtdoc,qtlottie,qtopcua,qtpositioning,qtremoteobjects,qtscxml,qtsensors,qttools,qttranslations,qtvirtualkeyboard,qtwayland -no-feature-accessibility -confirm-license
+        # Configure Qt5
+        ..\qt5\configure.bat -release -static -no-pch -optimize-size -platform win32-msvc -prefix "..\Qt6_binaries" -qt-sqlite -qt-pcre -qt-zlib -qt-libpng -qt-libjpeg -opengl desktop -qt-freetype -nomake tests -no-compile-examples -nomake examples -mp
         cmake --build . --parallel 4
         cmake --install .
     - name: Package binaries
       run: |
         # Create archive of the pre-built Qt binaries
-        7z a qt6_static_32.zip ..\Qt6_binaries
+        7z a qt6_630_static_32.zip ..\Qt6_binaries
     - uses: actions/upload-artifact@v1
       with:
-        name: qt6_static_32.zip
-        path: qt6_static_32.zip
+        name: qt6_630_static_32.zip
+        path: qt6_630_static_32.zip
