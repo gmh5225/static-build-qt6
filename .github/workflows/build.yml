@@ -1,0 +1,42 @@
+name: build
+
+on: workflow_dispatch
+
+jobs:
+  GenerateWinStaticBinaries:
+    runs-on: windows-2019
+
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v2
+    - name: Install Python 3.7 version
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.7'
+        architecture: 'x64'
+    - name: Compile static Qt version
+      run: |
+        # Clone Qt6 repo
+        cd ..
+        git clone https://code.qt.io/qt/qt5.git -b 6.3.0
+        cd qt5
+        perl init-repository -f --module-subset=qt3d,qtbase,qtcharts,qtdeclarative,qtimageformats,qtlanguageserver,qtmqtt,qtmultimedia,qtnetworkauth,qtquick3d,qtquicktimeline,qtserialbus,qtserialport,qtshadertools,qtsvg,qtwebchannel,qtwebengine,qtwebsockets,qtwebview
+        # Create shadow build folder
+        cd ..
+        mkdir qt6_shadow
+        cd qt6_shadow
+        # Setup the compiler
+        cmd.exe /c "call `"C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat`" && set > %temp%\vcvars.txt"
+        Get-Content "$env:temp\vcvars.txt" | Foreach-Object { if ($_ -match "^(.*?)=(.*)$") { Set-Content "env:\$($matches[1])" $matches[2] } }
+        # Configure Qt6
+        ..\qt5\configure.bat -release -static -no-pch -optimize-size -platform win32-msvc -prefix "..\Qt6_binaries" -skip qt5compat,qtactiveqt,qtcoap,qtconnectivity,qtdatavis3d,qtdoc,qtlottie,qtopcua,qtpositioning,qtremoteobjects,qtscxml,qtsensors,qttools,qttranslations,qtvirtualkeyboard,qtwayland -no-feature-accessibility -confirm-license
+        cmake --build . --parallel 4
+        cmake --install .
+    - name: Package binaries
+      run: |
+        # Create archive of the pre-built Qt binaries
+        7z a qt6_static.zip ..\Qt6_binaries
+    - uses: actions/upload-artifact@v1
+      with:
+        name: qt6_static.zip
+        path: qt6_static.zip
