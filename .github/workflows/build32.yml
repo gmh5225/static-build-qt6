@@ -30,7 +30,7 @@ jobs:
         Get-Content "$env:temp\vcvars32.txt" | Foreach-Object { if ($_ -match "^(.*?)=(.*)$") { Set-Content "env:\$($matches[1])" $matches[2] } }
         # Configure Qt5
         ..\qt5\configure.bat -release -static -static-runtime -no-pch -optimize-size -platform win32-msvc -prefix "..\Qt6_binaries" -no-feature-accessibility -confirm-license
-        cmake --build . --parallel 4 -AWin32
+        cmake --build . --parallel 4
         cmake --install .
     - name: Package binaries
       run: |
