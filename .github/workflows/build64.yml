@@ -4,7 +4,7 @@ on: workflow_dispatch
 
 jobs:
   GenerateWinStaticBinaries:
-    runs-on: windows-2019
+    runs-on: windows-latest
 
     steps:
     - name: Clone repository
@@ -18,15 +18,15 @@ jobs:
       run: |
         # Clone Qt6 repo
         cd ..
-        git clone https://code.qt.io/qt/qt5.git -b 6.3
+        git clone https://code.qt.io/qt/qt5.git -b 6.5.3
         cd qt5
-        perl init-repository -f --module-subset=qt5compat,qt3d,qtbase,qtcharts,qtdeclarative,qtimageformats,qtlanguageserver,qtmqtt,qtmultimedia,qtnetworkauth,qtquick3d,qtquicktimeline,qtserialbus,qtserialport,qtshadertools,qtsvg,qtwebchannel,qtwebengine,qtwebsockets,qtwebview
+        perl init-repository -f --module-subset=qtbase,qtsvg,qtdeclarative,qtactiveqt,qtmultimedia,qttools,qtxmlpatterns,qttranslations,qtdoc,qtrepotools,qtqa,qtlocation,qtpositioning,qtsensors,qtsystems,qtfeedback,qtpim,qtconnectivity,qtwayland,qt3d,qtimageformats,qtserialbus,qtserialport,qtwebsockets,qtwebchannel,qtwebengine,qtcanvas3d,qtwebview,qtcharts,qtdatavis3d,qtvirtualkeyboard,qtgamepad,qtscxml,qtspeech,qtnetworkauth,qtremoteobjects,qtwebglplugin,qtlottie,qtquicktimeline,qtquick3d,qtshadertools,qt5compat,qtcoap,qtmqtt,qtopcua,qtlanguageserver,qthttpserver,qtquick3dphysics,qtgrpc,qtquickeffectmaker
         # Create shadow build folder
         cd ..
         mkdir qt6_shadow
         cd qt6_shadow
         # Setup the compiler
-        cmd.exe /c "call `"C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat`" && set > %temp%\vcvars.txt"
+        cmd.exe /c "call `"C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat`" && set > %temp%\vcvars.txt"
         Get-Content "$env:temp\vcvars.txt" | Foreach-Object { if ($_ -match "^(.*?)=(.*)$") { Set-Content "env:\$($matches[1])" $matches[2] } }
         # Configure Qt5
         ..\qt5\configure.bat -release -static -static-runtime -no-pch -optimize-size -platform win32-msvc -prefix "..\Qt6_binaries" -no-feature-accessibility -confirm-license
@@ -35,8 +35,8 @@ jobs:
     - name: Package binaries
       run: |
         # Create archive of the pre-built Qt binaries
-        7z a qt6_630_static_64.zip ..\Qt6_binaries
+        7z a qt6_653_static_64.zip ..\Qt6_binaries
     - uses: actions/upload-artifact@v1
       with:
-        name: qt6_630_static_64.zip
-        path: qt6_630_static_64.zip
+        name: qt6_653_static_64.zip
+        path: qt6_653_static_64.zip
