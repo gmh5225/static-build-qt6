@@ -38,5 +38,5 @@ jobs:
         7z a qt6_660_static_64.zip ..\Qt6_binaries
     - uses: actions/upload-artifact@v1
       with:
-        name: qt6_660_static_64.zip
+        name: qt6_660_static_64
         path: qt6_660_static_64.zip
