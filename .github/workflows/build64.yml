@@ -18,7 +18,7 @@ jobs:
       run: |
         # Clone Qt6 repo
         cd ..
-        git clone https://code.qt.io/qt/qt5.git -b 6.3
+        git clone https://code.qt.io/qt/qt5.git -b 6.6
         cd qt5
         perl init-repository -f --module-subset=qt5compat,qt3d,qtbase,qtcharts,qtdeclarative,qtimageformats,qtlanguageserver,qtmqtt,qtmultimedia,qtnetworkauth,qtquick3d,qtquicktimeline,qtserialbus,qtserialport,qtshadertools,qtsvg,qtwebchannel,qtwebengine,qtwebsockets,qtwebview
         # Create shadow build folder
@@ -35,8 +35,8 @@ jobs:
     - name: Package binaries
       run: |
         # Create archive of the pre-built Qt binaries
-        7z a qt6_630_static_64.zip ..\Qt6_binaries
+        7z a qt6_660_static_64.zip ..\Qt6_binaries
     - uses: actions/upload-artifact@v1
       with:
-        name: qt6_630_static_64.zip
-        path: qt6_630_static_64.zip
+        name: qt6_660_static_64.zip
+        path: qt6_660_static_64.zip
